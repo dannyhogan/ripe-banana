@@ -79,13 +79,15 @@ describe('test studio routes', () => {
     return request(app)
       .get(`/api/v1/studios/${studio._id}`)
       .then(res => {
-        expect(res.body).toEqual({ 
+        expect(res.body).toEqual({
+          _id: expect.any(String),
           name: 'Alchemy',
           address: { 
             city: 'Portland',
             state: 'OR',
             country: 'USA'
-          }
+          },
+          __v: 0
         });
       });
   });
