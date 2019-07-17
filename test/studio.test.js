@@ -40,27 +40,9 @@ describe('test studio routes', () => {
 
   it('can get all studios using /GET', async() => {
     const studios = await Studio.create([
-      { name: 'Alchemy',
-        address: { 
-          city: 'Portland',
-          state: 'OR',
-          country: 'USA'
-        }
-      },
-      { name: 'Pixar',
-        address: { 
-          city: 'Hollywood',
-          state: 'CA',
-          country: 'USA'
-        }
-      },
-      { name: 'Disney',
-        address: { 
-          city: 'Orlando',
-          state: 'FL',
-          country: 'USA'
-        }
-      }
+      { name: 'Alchemy' },
+      { name: 'Pixar' },
+      { name: 'Disney' }
     ]);
 
     return request(app)
@@ -68,7 +50,10 @@ describe('test studio routes', () => {
       .then(res => {
         const studioJSON = JSON.parse(JSON.stringify(studios));
         studioJSON.forEach(studio => {
-          expect(res.body).toContainEqual(studio);
+          expect(res.body).toContainEqual({
+            _id: expect.any(String),
+            name: studio.name
+          });
         });
       });
   });
