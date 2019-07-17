@@ -51,8 +51,8 @@ describe('test studio routes', () => {
         const studioJSON = JSON.parse(JSON.stringify(studios));
         studioJSON.forEach(studio => {
           expect(res.body).toContainEqual({
-            _id: expect.any(String),
-            name: studio.name
+            _id: studio._id,
+            name: studio.name,
           });
         });
       });
