@@ -39,7 +39,6 @@ describe('test studio routes', () => {
   });
 
   it('can get all studios using /GET', async() => {
-
     const studios = await Studio.create([
       { name: 'Alchemy',
         address: { 
@@ -73,4 +72,22 @@ describe('test studio routes', () => {
         });
       });
   });
+
+  it('can get a studio by its ID using /GET', async() => {
+    const studio = await Studio.create({ name: 'Alchemy', address: { city: 'Portland', state: 'OR', country: 'USA' } });
+
+    return request(app)
+      .get(`/api/v1/studios/${studio._id}`)
+      .then(res => {
+        expect(res.body).toEqual({ 
+          name: 'Alchemy',
+          address: { 
+            city: 'Portland',
+            state: 'OR',
+            country: 'USA'
+          }
+        });
+      });
+  });
+
 });
