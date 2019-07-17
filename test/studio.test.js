@@ -22,16 +22,18 @@ describe('test studio routes', () => {
 
   it('can create a new studio with /POST', () => {
     return request(app)
-      .post('/api/vi/studios')
+      .post('/api/v1/studios')
       .send({ name: 'Alchemy', address: { city: 'Portland', state: 'OR', country: 'USA' } })
       .then(res => {
         expect(res.body).toEqual({
+          _id: expect.any(String),
           name: 'Alchemy',
           address: { 
             city: 'Portland',
             state: 'OR',
             country: 'USA'
-          }
+          },
+          __v: 0
         });
       });
   });
