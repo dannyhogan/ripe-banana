@@ -38,9 +38,9 @@ describe('test studio routes', () => {
       });
   });
 
-  it('can get all studios using /GET', () => {
+  it('can get all studios using /GET', async() => {
 
-    const studios = [
+    const studios = await Studio.create([
       { name: 'Alchemy',
         address: { 
           city: 'Portland',
@@ -62,10 +62,10 @@ describe('test studio routes', () => {
           country: 'USA'
         }
       }
-    ];
+    ]);
 
     return request(app)
-      .get('/')
+      .get('/api/v1/studios')
       .then(res => {
         const studioJSON = JSON.parse(JSON.stringify(studios));
         studioJSON.forEach(studio => {
