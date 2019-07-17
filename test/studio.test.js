@@ -37,4 +37,40 @@ describe('test studio routes', () => {
         });
       });
   });
+
+  it('can get all studios using /GET', () => {
+
+    const studios = [
+      { name: 'Alchemy',
+        address: { 
+          city: 'Portland',
+          state: 'OR',
+          country: 'USA'
+        }
+      },
+      { name: 'Pixar',
+        address: { 
+          city: 'Hollywood',
+          state: 'CA',
+          country: 'USA'
+        }
+      },
+      { name: 'Disney',
+        address: { 
+          city: 'Orlando',
+          state: 'FL',
+          country: 'USA'
+        }
+      }
+    ];
+
+    return request(app)
+      .get('/')
+      .then(res => {
+        const studioJSON = JSON.parse(JSON.stringify(studios));
+        studioJSON.forEach(studio => {
+          expect(res.body).toContainEqual(studio);
+        });
+      });
+  });
 });
