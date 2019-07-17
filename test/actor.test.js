@@ -34,4 +34,20 @@ describe('test actor routes', () => {
         });
       });
   });
+
+  it('can get all actors by id using /GET', async() => {
+    const actors = await Actor.create({ name: 'Danny' }, { name: 'Tyler' }, { name: 'Peebs' });
+
+    return request(app)
+      .get('/api/v1/actors/')
+      .then(res => {
+        const actorsJSON = JSON.parse(JSON.stringify(actors));
+        actorsJSON.forEach(actor => {
+          expect(res.body).toContainEqual({
+            name: actor.name,
+            _id: actor._id
+          });
+        });
+      });
+  });
 });
