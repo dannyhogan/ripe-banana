@@ -39,7 +39,7 @@ describe('test actor routes', () => {
     const actors = await Actor.create({ name: 'Danny' }, { name: 'Tyler' }, { name: 'Peebs' });
 
     return request(app)
-      .get('/api/v1/actors/')
+      .get('/api/v1/actors')
       .then(res => {
         const actorsJSON = JSON.parse(JSON.stringify(actors));
         actorsJSON.forEach(actor => {
@@ -57,8 +57,9 @@ describe('test actor routes', () => {
     return request(app)
       .get(`/api/v1/actors/${actor._id}`)
       .then(res => {
+        const actorJSON = JSON.parse(JSON.stringify(actor));
         expect(res.body).toEqual({
-          _id: actor._id,
+          _id: actorJSON._id,
           name: actor.name,
           __v: 0
         });
