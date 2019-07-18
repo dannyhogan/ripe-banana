@@ -35,7 +35,7 @@ describe('test actor routes', () => {
       });
   });
 
-  it('can get all actors by id using /GET', async() => {
+  it('can get all actors by using /GET', async() => {
     const actors = await Actor.create({ name: 'Danny' }, { name: 'Tyler' }, { name: 'Peebs' });
 
     return request(app)
@@ -47,6 +47,20 @@ describe('test actor routes', () => {
             name: actor.name,
             _id: actor._id
           });
+        });
+      });
+  });
+
+  it('can get an actor by ID using /GET', async() => {
+    const actor = await Actor.create({ name: 'Danny' });
+
+    return request(app)
+      .get(`/api/v1/actors/${actor._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: actor._id,
+          name: actor.name,
+          __v: 0
         });
       });
   });
