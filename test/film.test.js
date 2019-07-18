@@ -55,4 +55,32 @@ describe('test film routes', () => {
         });
       });
   });
+
+  it('test get all films using /GET', async() => {
+    const films = await Film.create([{
+      title: 'Up',
+      studio: studio._id,
+      released: 1997,
+      cast: [{
+        actor: actor._id
+      }]
+    }
+    ]);
+
+    return request(app)
+      .get('/api/v1/films')
+      .then(res => {
+        expect(res.body).toEqual([
+          {
+            _id: expect.any(String),
+            title: 'Up',
+            studio: { _id: studio._id, name: 'Danny', __v: 0 },
+            released: 1997
+          }
+        ]);
+      });
+  });
+
+
+
 });
