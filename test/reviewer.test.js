@@ -34,4 +34,18 @@ describe('test film routes', () => {
       });
   });
 
+  it('can get all reviewers using /GET', async() => {
+    const reviewer = await Reviewer.create({ name: 'Danny', company: 'Fisher' });
+
+    return request(app)
+      .get('/api/v1/reviewers')
+      .then(res => {
+        expect(res.body).toEqual([{
+          _id: expect.any(String),
+          name: reviewer.name,
+          company: reviewer.company
+        }]);
+      });
+  });
+
 });
