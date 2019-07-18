@@ -57,15 +57,14 @@ describe('test film routes', () => {
   });
 
   it('test get all films using /GET', async() => {
-    const films = await Film.create([{
+    Film.create({
       title: 'Up',
       studio: studio._id,
       released: 1997,
       cast: [{
         actor: actor._id
       }]
-    }
-    ]);
+    });
 
     return request(app)
       .get('/api/v1/films')
@@ -74,13 +73,41 @@ describe('test film routes', () => {
           {
             _id: expect.any(String),
             title: 'Up',
-            studio: { _id: studio._id, name: 'Danny', __v: 0 },
+            studio: { _id: studio._id, name: studio.name },
             released: 1997
           }
         ]);
       });
   });
 
+  it('can get a film by its ID using GET', async() => {
+    const film = await Film.create({
+      title: 'Up',
+      studio: studio._id,
+      released: 1997,
+      cast: [{
+        role: 'Lead',
+        actor: actor._id
+      }]
+    });
 
-
+    return request(app)
+      .get(`/api/v1/films/${film._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: expect.any(String),
+          title: 'Up',
+          released: 1997,
+          studio: {
+            _id: studio._id,
+            name: studio.name
+          },
+          cast: [{
+            _id: expect.any(String),
+            role: expect.any(String),
+            actor: { _id: actor._id, name: actor.name }
+          }],
+        });
+      });
+  });
 });
