@@ -91,4 +91,37 @@ describe('test studio routes', () => {
       });
   });
 
+  it('can NOT delete a studio if there are films', () => {
+    return request(app)
+      .delete(`/api/v1/studios/${studio._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'You can not delete a studio that has films!'
+        });
+      });
+  });
+
+  it('can delte a studio with no films', async() => {
+    const newStudio = await Studio.create({ name: 'Studio1', address: { city: 'Portland', state: 'OR', country: 'USA' } });
+    return request(app)
+      .delete(`/api/v1/studios/${newStudio._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: newStudio._id.toString(),
+          name: 'Studio1',
+          address: {
+            city: 'Portland',
+            state: 'OR',
+            country: 'USA'
+          },
+          __v: 0
+        });
+      });
+  });
+
 });
+
+// DELETE
+// Studio, Films, and Actors can be deleted. However, studios cannot be 
+// deleted if there are films and actors cannot be deleted who are in films.
+
