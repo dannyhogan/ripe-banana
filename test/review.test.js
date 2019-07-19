@@ -39,7 +39,7 @@ describe('test review routes', () => {
   it('can create a review using /POST', () => {
     return request(app)
       .post('/api/v1/reviews')
-      .send({ rating: 4, reviewer: reviewer._id, review: 'meh, it was ok.', film: film._id, })
+      .send({ rating: 4, reviewer: reviewer._id, review: 'meh, it was ok.', film: film._id })
       .then(res => {
         expect(res.body).toEqual({
           _id: expect.any(String),
@@ -69,4 +69,51 @@ describe('test review routes', () => {
         }]);
       });
   });
+
+  it('only returns 100 of the most recent reviews', async() => {
+
+    await Promise.all([...Array(101)].map(() => {
+      return Review.create({
+        rating: 4,
+        reviewer: reviewer._id,
+        review: 'meh, it was ok.',
+        film: film._id
+      });
+    }));
+    
+    return request(app)
+      .get('/api/v1/reviews')
+      .then(res => {
+        expect(res.body).toHaveLength(100);
+      });
+
+  });
+
+  it('only returns 100 of the most recent reviews', async() => {
+    await Promise.all([...Array(101)].map(() => {
+      return Review.create({
+        rating: 4,
+        reviewer: reviewer._id,
+        review: 'meh, it was ok.',
+        film: film._id
+      });
+    }));
+    
+    return request(app)
+      .get('/api/v1/reviews')
+      .then(res => {
+        expect(res.body[0]).toEqual({
+          _id: expect.any(String),
+          rating: 4,
+          review: 'meh, it was ok.',
+          film: {
+            _id: film._id,
+            title: film.title
+          }
+        });
+      });
+
+  });
+
+
 });
