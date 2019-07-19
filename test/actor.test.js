@@ -48,7 +48,6 @@ describe('test actor routes', () => {
   });
 
   it('can get all actors by using /GET', async() => {
-
     return request(app)
       .get('/api/v1/actors')
       .then(res => {
@@ -60,7 +59,6 @@ describe('test actor routes', () => {
   });
 
   it('can get an actor by ID using /GET', async() => {
-
     return request(app)
       .get(`/api/v1/actors/${actor._id}`)
       .then(res => {
@@ -76,6 +74,31 @@ describe('test actor routes', () => {
         });
       });
   });
+
+  it('can NOT delete an actor that appears in one or more films', () => {
+    return request(app)
+      .delete(`/api/v1/actors/${actor._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          message: 'You can not delete an actor that is in films!'
+        });
+      });
+  });
+
+  it('can delete an actor that is not in any films', async() => {
+    const newActor = await Actor.create({ name: 'Danny', company: 'None' });
+    
+    return request(app)
+      .delete(`/api/v1/actors/${newActor._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: newActor._id.toString(),
+          name: newActor.name,
+          __v: 0
+        });
+      });
+  });
+
 });
 
 
