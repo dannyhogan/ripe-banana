@@ -5,6 +5,8 @@ const app = require('../lib/app');
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const Actor = require('../lib/models/Actor');
+const Film = require('../lib/models/Film');
+const Studio = require('../lib/models/Studio');
 
 describe('test actor routes', () => {
 
@@ -14,6 +16,16 @@ describe('test actor routes', () => {
 
   beforeEach(() => {
     return mongoose.connection.dropDatabase();
+  });
+
+  let film = null;
+  let studio = null;
+  let actor = null;
+
+  beforeEach(async() => {
+    actor = JSON.parse(JSON.stringify(await Actor.create({ name: 'Danny' })));
+    studio = JSON.parse(JSON.stringify(await Studio.create({ name: 'Alchemy', address: { city: 'Portland', state: 'OR', country: 'USA' } })));
+    film = JSON.parse(JSON.stringify(await Film.create({ title: 'Aladdin', studio: studio._id, released: 1997, cast: [{ role: 'Lead', actor: actor._id }] })));
   });
 
   afterAll(() => {
@@ -36,23 +48,18 @@ describe('test actor routes', () => {
   });
 
   it('can get all actors by using /GET', async() => {
-    const actors = await Actor.create({ name: 'Danny' }, { name: 'Tyler' }, { name: 'Peebs' });
 
     return request(app)
       .get('/api/v1/actors')
       .then(res => {
-        const actorsJSON = JSON.parse(JSON.stringify(actors));
-        actorsJSON.forEach(actor => {
-          expect(res.body).toContainEqual({
-            name: actor.name,
-            _id: actor._id
-          });
+        expect(res.body).toContainEqual({
+          name: actor.name,
+          _id: actor._id
         });
       });
   });
 
   it('can get an actor by ID using /GET', async() => {
-    const actor = await Actor.create({ name: 'Danny' });
 
     return request(app)
       .get(`/api/v1/actors/${actor._id}`)
@@ -61,8 +68,14 @@ describe('test actor routes', () => {
         expect(res.body).toEqual({
           _id: actorJSON._id,
           name: actor.name,
-          __v: 0
+          films: [{
+            _id: film._id,
+            title: film.title,
+            released: film.released
+          }]
         });
       });
   });
 });
+
+
