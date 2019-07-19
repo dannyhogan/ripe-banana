@@ -110,4 +110,25 @@ describe('test film routes', () => {
         });
       });
   });
+
+  it('can delete film by ID using /DELETE', () => {
+    return request(app)
+      .delete(`/api/v1/films/${film._id}`)
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: film._id.toString(),
+          title: film.title,
+          studio: studio._id,
+          released: film.released,
+          cast: [
+            {
+              _id: expect.any(String),
+              role: 'Lead',
+              actor: actor._id
+            }
+          ],
+          __v: 0
+        });
+      });
+  });
 });
