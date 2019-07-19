@@ -5,6 +5,8 @@ const app = require('../lib/app');
 const connect = require('../lib/utils/connect');
 const mongoose = require('mongoose');
 const Studio = require('../lib/models/Studio');
+const Film = require('../lib/models/Film');
+const Actor = require('../lib/models/Actor');
 
 describe('test studio routes', () => {
 
@@ -14,6 +16,16 @@ describe('test studio routes', () => {
 
   beforeEach(() => {
     return mongoose.connection.dropDatabase();
+  });
+
+  let film = null;
+  let actor = null;
+  let studio = null;
+
+  beforeEach(async() => {
+    actor = JSON.parse(JSON.stringify(await Actor.create({ name: 'Danny' })));
+    studio = JSON.parse(JSON.stringify(await Studio.create({ name: 'Alchemy', address: { city: 'Portland', state: 'OR', country: 'USA' } })));
+    film = JSON.parse(JSON.stringify(await Film.create({ title: 'Aladdin', studio: studio._id, released: 1997, cast: [{ role: 'Lead', actor: actor._id }] })));
   });
 
   afterAll(() => {
@@ -59,7 +71,6 @@ describe('test studio routes', () => {
   });
 
   it('can get a studio by its ID using /GET', async() => {
-    const studio = await Studio.create({ name: 'Alchemy', address: { city: 'Portland', state: 'OR', country: 'USA' } });
 
     return request(app)
       .get(`/api/v1/studios/${studio._id}`)
@@ -72,7 +83,10 @@ describe('test studio routes', () => {
             state: 'OR',
             country: 'USA'
           },
-          __v: 0
+          films: [{
+            _id: film._id,
+            title: film.title
+          }]
         });
       });
   });
