@@ -99,6 +99,18 @@ describe('test actor routes', () => {
       });
   });
 
+  it('can update an actor using /PUT', () => {
+    return request(app)
+      .put(`/api/v1/actors/${actor._id}`)
+      .send({ name: 'Chad', company: 'Chad Co.' })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: actor._id.toString(),
+          name: 'Chad',
+          __v: 0
+        });
+      });
+  });
 });
 
 
