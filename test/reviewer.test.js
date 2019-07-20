@@ -85,4 +85,19 @@ describe('test film routes', () => {
         });
       });
   });
+
+  it('can update an reviewer using /PUT', () => {
+    return request(app)
+      .put(`/api/v1/reviewers/${reviewer._id}`)
+      .send({ name: 'Chad', company: 'Chaddy' })
+      .then(res => {
+        expect(res.body).toEqual({
+          _id: reviewer._id.toString(),
+          name: 'Chad',
+          company: 'Chaddy',
+          __v: 0
+        });
+      });
+  });
+
 });
